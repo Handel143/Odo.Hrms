@@ -1,7 +1,8 @@
 // API client for the Odo HRMS backend (replaces the old localStorage mock DB).
 // Talks to the zero-dependency Node backend in `hrms-backend`.
 
-const API_BASE = (window.__HRMS_API_BASE__ || "http://localhost:4000") + "/api";
+const API_BASE =
+  (window.__HRMS_API_BASE__ || "https://odo-hrms.onrender.com") + "/api";
 
 const TOKEN_KEY = "hrms_token";
 const USER_KEY = "hrms_user";
