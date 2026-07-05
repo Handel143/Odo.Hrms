@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Odoo HRMS - Premium Enterprise Suite</title>
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="./src/style.css">
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Global Toasts Container -->
+  <div id="toasts-container" class="toasts-container"></div>
+
+  <!-- ========================================================
+       1. AUTHENTICATION WRAPPER OVERLAYS
+       ======================================================== -->
+  <div id="auth-overlay" class="auth-wrapper auth-active">
+    
+    <!-- ADMIN LOGIN (Split-screen premium layout) -->
+    <div id="admin-login-view" class="admin-login-container">
+      <div class="admin-left">
+        <div class="logo-area flex-center" style="justify-content: flex-start; gap: 8px;">
+          <div class="logo-circle flex-center">O</div>
+          <span class="logo-text" style="color: white; font-size: 1.35rem;">odoo <span style="font-weight:300;">HRMS</span></span>
+        </div>
+        <div class="branding-content">
+          <h2>Powering the future of human resource operations.</h2>
+          <p>An elegant, premium SaaS architecture designed for real-time tracking, touchless payroll, heatmaps, and secure digital identities.</p>
+        </div>
+        <div class="footer-branding">
+          Adamas University Hackathon 2026 • Enterprise Production Version
+        </div>
+      </div>
+      <div class="admin-right">
+        <div class="login-card glass-panel">
+          <h3>Welcome back, Director</h3>
+          <p class="login-subtitle">Sign in to control your enterprise workforce.</p>
+          
+          <form id="admin-login-form">
+            <div class="input-group">
+              <label class="input-label">Email Address</label>
+              <input type="email" id="admin-email" class="input-field" value="sarah.jenkins@odoo.co" required>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Password</label>
+              <input type="password" id="admin-password" class="input-field" value="admin123" required>
+            </div>
+            <div class="remember-forgot">
+              <label><input type="checkbox" checked> Remember admin session</label>
+              <a href="#">Reset credentials</a>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">Access Control Center</button>
+          </form>
+          
+          <div class="auth-toggle-link" id="switch-to-employee-btn">
+            Are you an employee? <span>Switch to Portal</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMPLOYEE LOGIN (Centered premium glassmorphism card) -->
+    <div id="employee-login-view" class="employee-login-container" style="display: none;">
+      <div class="employee-login-card glass-panel">
+        <div class="avatar-preview flex-center">
+          <i data-lucide="user"></i>
+        </div>
+        <h3>Employee Self-Service</h3>
+        <p class="login-subtitle">Connect and start your working day securely.</p>
+        
+        <form id="employee-login-form">
+          <div class="input-group">
+            <label class="input-label">Corporate Email</label>
+            <input type="email" id="employee-email" class="input-field" value="rahul.sharma@odoo.co" required>
+          </div>
+          <div class="input-group">
+            <label class="input-label">Password</label>
+            <input type="password" id="employee-password" class="input-field" value="employee123" required>
+          </div>
+          <div class="remember-forgot">
+            <label><input type="checkbox" checked> Stay signed in</label>
+            <a href="#">Forgot password?</a>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">Start My Day</button>
+        </form>
+        
+        <div class="auth-toggle-link" id="switch-to-admin-btn">
+          HR administrator? <span>Sign in here</span>
+        </div>
+        <div class="auth-toggle-link" id="switch-to-signup-btn">
+          New here? <span>Create an account</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SELF-SERVICE SIGNUP (Centered premium glassmorphism card) -->
+    <div id="signup-view" class="employee-login-container" style="display: none;">
+      <div class="employee-login-card glass-panel">
+        <div class="avatar-preview flex-center">
+          <i data-lucide="user-plus"></i>
+        </div>
+        <h3>Create Your Account</h3>
+        <p class="login-subtitle">Join the workforce portal in just a few seconds.</p>
+
+        <form id="signup-form">
+          <div class="input-group">
+            <label class="input-label">Full Name</label>
+            <input type="text" id="signup-name" class="input-field" placeholder="e.g. Jordan Lee" required>
+          </div>
+          <div class="input-group">
+            <label class="input-label">Corporate Email</label>
+            <input type="email" id="signup-email" class="input-field" placeholder="e.g. jordan.lee@odoo.co" required>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div class="input-group">
+              <label class="input-label">Department</label>
+              <select id="signup-dept" class="filter-select" style="width:100%;">
+                <option value="Engineering">Engineering</option>
+                <option value="Product & Design">Product &amp; Design</option>
+                <option value="Human Resources">Human Resources</option>
+                <option value="Finance & Operations">Finance &amp; Operations</option>
+                <option value="Unassigned">Not sure yet</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Role / Title</label>
+              <input type="text" id="signup-role" class="input-field" placeholder="e.g. Associate Engineer">
+            </div>
+          </div>
+          <div class="input-group">
+            <label class="input-label">Password</label>
+            <input type="password" id="signup-password" class="input-field" placeholder="At least 6 characters" required minlength="6">
+          </div>
+          <div class="input-group">
+            <label class="input-label">Confirm Password</label>
+            <input type="password" id="signup-confirm-password" class="input-field" placeholder="Re-enter your password" required minlength="6">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">Create My Account</button>
+        </form>
+
+        <div class="auth-toggle-link" id="switch-to-login-from-signup-btn">
+          Already have an account? <span>Sign in here</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========================================================
+       2. WORKSPACE PREPARING SCREEN
+       ======================================================== -->
+  <div id="loader-overlay" class="loader-wrapper">
+    <div class="loading-skeleton-pulse"></div>
+    <div class="loading-text" id="loader-message">PREPARING YOUR ENTERPRISE WORKSPACE...</div>
+  </div>
+
+  <!-- ========================================================
+       3. WELCOME ROLE-BASED LANDING SUMMARY OVERLAYS
+       ======================================================== -->
+  <div id="welcome-overlay" class="welcome-screen-wrapper">
+    
+    <!-- ADMIN WELCOME BOX -->
+    <div id="admin-welcome-box" class="welcome-box glass-panel" style="display: none;">
+      <div class="welcome-header">
+        <h2>Good Morning, Sarah 👋</h2>
+        <p>Here is your enterprise snapshot for today.</p>
+      </div>
+      <div class="summary-grid">
+        <div class="summary-tile">
+          <div class="summary-tile-icon flex-center"><i data-lucide="users"></i></div>
+          <div class="summary-tile-data">
+            <h4 id="welcome-total-employees">10</h4>
+            <p>Total Headcount</p>
+          </div>
+        </div>
+        <div class="summary-tile">
+          <div class="summary-tile-icon flex-center" style="background: rgba(34, 197, 94, 0.1); color: var(--success);"><i data-lucide="check-circle-2"></i></div>
+          <div class="summary-tile-data">
+            <h4 id="welcome-present-employees">9</h4>
+            <p>Present Today</p>
+          </div>
+        </div>
+        <div class="summary-tile">
+          <div class="summary-tile-icon flex-center" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);"><i data-lucide="clock"></i></div>
+          <div class="summary-tile-data">
+            <h4 id="welcome-leave-requests">3</h4>
+            <p>Leave Requests</p>
+          </div>
+        </div>
+        <div class="summary-tile">
+          <div class="summary-tile-icon flex-center" style="background: rgba(6, 182, 212, 0.1); color: var(--info);"><i data-lucide="gift"></i></div>
+          <div class="summary-tile-data">
+            <h4 id="welcome-birthdays">2</h4>
+            <p>Anniversaries / Birthdays</p>
+          </div>
+        </div>
+      </div>
+      <div class="action-button-container">
+        <button id="continue-to-admin-dashboard" class="btn btn-primary" style="padding: 12px 28px;">Continue to Control Center</button>
+      </div>
+    </div>
+
+    <!-- EMPLOYEE WELCOME BOX -->
+    <div id="employee-welcome-box" class="welcome-box glass-panel" style="display: none;">
+      <div class="welcome-header">
+        <h2 id="employee-welcome-title">Good Morning, Rahul 👋</h2>
+        <p>Your shift and balance briefing.</p>
+      </div>
+      <div class="summary-grid">
+        <div class="summary-tile">
+          <div class="summary-tile-icon flex-center"><i data-lucide="calendar"></i></div>
+          <div class="summary-tile-data">
+            <h4>09:00 AM - 06:00 PM</h4>
+            <p>Today's Shift</p>
+          </div>
+        </div>
+        <div class="summary-tile">
+          <div class="summary-tile-icon flex-center" style="background: rgba(34, 197, 94, 0.1); color: var(--success);"><i data-lucide="flame"></i></div>
+          <div class="summary-tile-data">
+            <h4 id="welcome-employee-streak">8 Days</h4>
+            <p>Attendance Streak</p>
+          </div>
+        </div>
+        <div class="summary-tile">
+          <div class="summary-tile-icon flex-center" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);"><i data-lucide="plane"></i></div>
+          <div class="summary-tile-data">
+            <h4 id="welcome-employee-leaves">12 Days</h4>
+            <p>Leave Balance Available</p>
+          </div>
+        </div>
+        <div class="summary-tile">
+          <div class="summary-tile-icon flex-center" style="background: rgba(6, 182, 212, 0.1); color: var(--info);"><i data-lucide="dollar-sign"></i></div>
+          <div class="summary-tile-data">
+            <h4 id="welcome-employee-salary">July 1st</h4>
+            <p>Next Salary Date</p>
+          </div>
+        </div>
+      </div>
+      <div class="action-button-container">
+        <button id="continue-to-employee-dashboard" class="btn btn-primary" style="padding: 12px 28px;">Start My Day</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========================================================
+       4. THE MAIN APPLICATION CONTAINER (APP SHELL)
+       ======================================================== -->
+  <div id="app-container" class="app-container">
+    
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar">
+      <div>
+        <div class="sidebar-logo">
+          <div class="logo-circle flex-center">O</div>
+          <span class="logo-text">odoo <span style="font-weight:300;">HRMS</span></span>
+          <span class="logo-tag">PRO</span>
+        </div>
+        <nav class="sidebar-nav">
+          <a class="nav-item active" data-view="dashboard"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+          <a class="nav-item" data-view="employees" id="nav-item-employees"><i data-lucide="users"></i> Employees</a>
+          <a class="nav-item" data-view="attendance"><i data-lucide="calendar-check"></i> Attendance</a>
+          <a class="nav-item" data-view="leaves"><i data-lucide="plane"></i> Leave Management</a>
+          <a class="nav-item" data-view="payroll"><i data-lucide="dollar-sign"></i> Payroll</a>
+          <a class="nav-item" data-view="documents"><i data-lucide="folder-open"></i> Documents</a>
+          <a class="nav-item" data-view="analytics" id="nav-item-analytics"><i data-lucide="trending-up"></i> Analytics</a>
+          <a class="nav-item" data-view="settings"><i data-lucide="settings"></i> Settings</a>
+        </nav>
+      </div>
+      
+      <div class="sidebar-footer">
+        <img id="sidebar-avatar" src="" alt="Avatar" class="user-avatar-footer">
+        <div class="user-info-footer">
+          <h5 id="sidebar-name">User Name</h5>
+          <p id="sidebar-role">User Role</p>
+        </div>
+        <div class="logout-btn flex-center" id="logout-btn-trigger">
+          <i data-lucide="log-out"></i>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT CONTENT AREA -->
+    <main class="main-content">
+      
+      <!-- TOP NAVIGATION BAR -->
+      <header class="top-navbar">
+        <div class="top-nav-left">
+          <div class="search-bar-container">
+            <i data-lucide="search" class="search-icon-nav" style="width:16px; height:16px;"></i>
+            <input type="text" placeholder="Search everywhere..." class="search-bar-input" id="global-search-input">
+            <span class="search-shortcut">⌘K</span>
+          </div>
+        </div>
+        
+        <div class="top-nav-right">
+          <!-- Calendar shortcut info -->
+          <div class="flex-center" style="gap:6px; font-size:0.8125rem; color:var(--text-secondary); background: var(--background); padding: 6px 12px; border-radius: 8px; border:1px solid var(--border-color)">
+            <i data-lucide="calendar" style="width:14px; height:14px;"></i>
+            <span id="current-header-date">July 4, 2026</span>
+          </div>
+          
+          <!-- Theme toggle button -->
+          <button class="nav-actions-btn flex-center" id="theme-toggle-btn">
+            <i data-lucide="moon" id="theme-toggle-icon"></i>
+          </button>
+          
+          <!-- Notifications dropdown mockup -->
+          <button class="nav-actions-btn flex-center" style="position: relative;">
+            <i data-lucide="bell"></i>
+            <span class="notification-dot"></span>
+          </button>
+          
+          <div class="user-profile-header" id="header-profile-trigger">
+            <img id="header-avatar" src="" alt="User profile">
+            <span id="header-name">Sarah</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- DYNAMIC PAGE ROUTING VIEWS -->
+      <section class="page-viewport">
+
+        <!-- ========================================================
+             P-1: DASHBOARD VIEW (ADMIN OR EMPLOYEE SPECIFIC)
+             ======================================================== -->
+        <div id="view-dashboard" class="page-view active">
+          
+          <!-- Admin Dashboard UI -->
+          <div id="admin-dashboard-layout">
+            <div class="page-title-row">
+              <div>
+                <h1>Admin Control Center</h1>
+                <p>Welcome back, Sarah. Here are the core metrics for today.</p>
+              </div>
+              <div>
+                <button id="add-employee-quick-btn" class="btn btn-primary"><i data-lucide="plus"></i> Add Employee</button>
+              </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="dashboard-grid">
+              <div class="card stat-card">
+                <span class="stat-card-title">Total Headcount</span>
+                <div class="stat-card-value" id="stat-total-headcount">10</div>
+                <div class="stat-card-sub" style="color: var(--success);"><i data-lucide="arrow-up-right" style="width:12px; height:12px;"></i> +1 this month</div>
+                <div class="stat-card-icon"><i data-lucide="users" style="width:24px; height:24px;"></i></div>
+              </div>
+              <div class="card stat-card">
+                <span class="stat-card-title">Present Today</span>
+                <div class="stat-card-value" id="stat-present-today">9</div>
+                <div class="stat-card-sub" style="color: var(--text-secondary);">Active checked-in users</div>
+                <div class="stat-card-icon" style="color: var(--success);"><i data-lucide="user-check" style="width:24px; height:24px;"></i></div>
+              </div>
+              <div class="card stat-card">
+                <span class="stat-card-title">Pending Leaves</span>
+                <div class="stat-card-value" id="stat-pending-leaves">3</div>
+                <div class="stat-card-sub" style="color: var(--warning);"><i data-lucide="alert-circle" style="width:12px; height:12px;"></i> Needs review</div>
+                <div class="stat-card-icon" style="color: var(--warning);"><i data-lucide="calendar" style="width:24px; height:24px;"></i></div>
+              </div>
+              <div class="card stat-card">
+                <span class="stat-card-title">Daily Attendance %</span>
+                <div class="stat-card-value" id="stat-attendance-rate">90%</div>
+                <div class="stat-card-sub" style="color: var(--success);"><i data-lucide="check" style="width:12px; height:12px;"></i> Exceeds target 85%</div>
+                <div class="stat-card-icon" style="color: var(--accent-secondary);"><i data-lucide="percent" style="width:24px; height:24px;"></i></div>
+              </div>
+            </div>
+
+            <!-- Double Column layout -->
+            <div class="dashboard-details-row">
+              
+              <!-- Core Charts Area -->
+              <div class="flex-column" style="display:flex; flex-direction:column; gap:24px;">
+                <div class="card" style="height:320px; display:flex; flex-direction:column;">
+                  <h3 style="font-size:1rem; margin-bottom:16px;">Weekly Attendance Activity</h3>
+                  <div style="flex-grow:1; position:relative;"><canvas id="attendance-trend-chart"></canvas></div>
+                </div>
+                
+                <!-- Recent Activity Feed -->
+                <div class="card">
+                  <div class="flex-center" style="justify-content:space-between; margin-bottom:16px;">
+                    <h3 style="font-size:1rem;">Real-time Attendance Activity</h3>
+                    <span class="badge badge-brand">Live Feed</span>
+                  </div>
+                  <div class="detail-list" id="dashboard-recent-activities">
+                    <!-- Loaded dynamically via JS -->
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Sidebar details (Holidays, Birthdays, Meetings) -->
+              <div class="events-column">
+                
+                <!-- Leave distribution chart -->
+                <div class="card" style="height:250px; display:flex; flex-direction:column;">
+                  <h3 style="font-size:0.9375rem; margin-bottom:12px;">Leave Category Ratios</h3>
+                  <div style="flex-grow:1; position:relative;"><canvas id="leave-dist-chart"></canvas></div>
+                </div>
+
+                <!-- Upcoming Announcements -->
+                <div class="card">
+                  <h3 style="font-size:0.9375rem; margin-bottom:16px;">Announcements</h3>
+                  <div style="display:flex; flex-direction:column; gap:12px;" id="dashboard-announcements">
+                    <!-- Dynamically Loaded -->
+                  </div>
+                </div>
+
+                <!-- Upcoming Events and Birthdays -->
+                <div class="card">
+                  <h3 style="font-size:0.9375rem; margin-bottom:16px;">Calendar Highlights</h3>
+                  <div class="detail-list" id="dashboard-events-calendar">
+                    <!-- Dynamically Loaded -->
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+
+          <!-- Employee Dashboard UI -->
+          <div id="employee-dashboard-layout" style="display: none;">
+            <div class="employee-hero-card">
+              <div class="hero-details">
+                <img id="emp-hero-avatar" src="" alt="Employee avatar">
+                <div>
+                  <h1 id="emp-hero-greeting" style="font-size:1.75rem;">Good Morning, Rahul 👋</h1>
+                  <p id="emp-hero-role">Senior Frontend Engineer • Engineering Department</p>
+                </div>
+              </div>
+              <div class="hero-actions">
+                <button class="btn btn-outline" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color:white;" id="view-my-digital-id-btn">
+                  <i data-lucide="qr-code"></i> Digital ID
+                </button>
+              </div>
+            </div>
+
+            <!-- Stats Grid for Employee -->
+            <div class="dashboard-grid">
+              <div class="card stat-card">
+                <span class="stat-card-title">Attendance Streak</span>
+                <div class="stat-card-value" id="emp-streak-value">8 Days</div>
+                <div class="stat-card-sub" style="color: var(--success);"><i data-lucide="flame" style="width:12px; height:12px;"></i> Keep it up!</div>
+                <div class="stat-card-icon" style="color: var(--danger);"><i data-lucide="flame" style="width:24px; height:24px;"></i></div>
+              </div>
+              <div class="card stat-card">
+                <span class="stat-card-title">Leave Balance Available</span>
+                <div class="stat-card-value" id="emp-leaves-value">12 Days</div>
+                <div class="stat-card-sub" style="color: var(--text-secondary);">Out of 30 total annual allocation</div>
+                <div class="stat-card-icon" style="color: var(--warning);"><i data-lucide="plane" style="width:24px; height:24px;"></i></div>
+              </div>
+              <div class="card stat-card">
+                <span class="stat-card-title">Current Net Salary</span>
+                <div class="stat-card-value" id="emp-salary-value">$5,800</div>
+                <div class="stat-card-sub" style="color: var(--success);">Credited on Jul 1</div>
+                <div class="stat-card-icon" style="color: var(--success);"><i data-lucide="dollar-sign" style="width:24px; height:24px;"></i></div>
+              </div>
+            </div>
+
+            <!-- Clock-in and Quick Tasks -->
+            <div class="dashboard-details-row">
+              <div class="card attendance-clock-card">
+                <span class="badge badge-brand" id="emp-clock-status-badge">OUT OF OFFICE</span>
+                <div class="clock-timer" id="live-running-clock">10:49:54 AM</div>
+                <div class="clock-date" id="live-running-date">Saturday, July 4, 2026</div>
+                <div style="display: flex; gap: 16px; width: 100%; max-width: 320px;">
+                  <button id="emp-checkin-btn" class="btn btn-primary" style="flex: 1;"><i data-lucide="log-in"></i> Check In</button>
+                  <button id="emp-checkout-btn" class="btn btn-outline" style="flex: 1;" disabled><i data-lucide="log-out"></i> Check Out</button>
+                </div>
+              </div>
+              
+              <div class="events-column">
+                <div class="card">
+                  <h3 style="font-size:0.9375rem; margin-bottom:16px;">Today's Meetings</h3>
+                  <div class="detail-list" id="emp-meetings-list">
+                    <!-- Populated dynamically -->
+                  </div>
+                </div>
+                
+                <div class="card">
+                  <h3 style="font-size:0.9375rem; margin-bottom:16px;">Upcoming Holidays</h3>
+                  <div class="detail-list" id="emp-holidays-list">
+                    <!-- Populated dynamically -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ========================================================
+             P-2: EMPLOYEES DIRECTORY
+             ======================================================== -->
+        <div id="view-employees" class="page-view">
+          <div class="page-title-row">
+            <div>
+              <h1>Employees Directory</h1>
+              <p>Search, filter, and view digital credentials of your enterprise workforce.</p>
+            </div>
+            <div>
+              <button id="add-employee-btn" class="btn btn-primary"><i data-lucide="user-plus"></i> Add Employee</button>
+            </div>
+          </div>
+
+          <!-- Directory Filter Section -->
+          <div class="filters-row">
+            <div class="filters-left">
+              <input type="text" placeholder="Search by name, skills, role..." class="input-field search-directory-input" id="search-directory-field">
+              <select class="filter-select" id="filter-dept-field">
+                <option value="All">All Departments</option>
+                <option value="Engineering">Engineering</option>
+                <option value="Product & Design">Product & Design</option>
+                <option value="Human Resources">Human Resources</option>
+                <option value="Finance & Operations">Finance & Operations</option>
+              </select>
+              <select class="filter-select" id="filter-status-field">
+                <option value="All">All Statuses</option>
+                <option value="Active">Active</option>
+                <option value="Remote">Remote</option>
+                <option value="On Leave">On Leave</option>
+              </select>
+            </div>
+            <div>
+              <button id="export-directory-csv" class="btn btn-outline"><i data-lucide="download"></i> Export CSV</button>
+            </div>
+          </div>
+
+          <!-- Grid of Employee Cards -->
+          <div class="directory-grid" id="directory-cards-container">
+            <!-- Dynamically Rendered -->
+          </div>
+        </div>
+
+        <!-- ========================================================
+             P-3: ATTENDANCE & HEATMAPS
+             ======================================================== -->
+        <div id="view-attendance" class="page-view">
+          <div class="page-title-row">
+            <div>
+              <h1>Workforce Attendance Tracker</h1>
+              <p>Analyze check-in distributions, late metrics, and visual activity maps.</p>
+            </div>
+            <div>
+              <button id="download-attendance-report-btn" class="btn btn-outline"><i data-lucide="download"></i> Download Report</button>
+            </div>
+          </div>
+
+          <div class="attendance-history-layout">
+            
+            <!-- GitHub style heatmap -->
+            <div class="flex-column" style="display:flex; flex-direction:column; gap:24px;">
+              <div class="card">
+                <div class="flex-center" style="justify-content:space-between; margin-bottom:16px;">
+                  <h3 style="font-size:1rem;">Workforce Activity Heatmap</h3>
+                  <span style="font-size:0.75rem; color:var(--text-secondary);">Last 3 Months</span>
+                </div>
+                <div class="heatmap-container">
+                  <div class="heatmap-grid" id="attendance-heatmap-grid">
+                    <!-- Populated dynamically -->
+                  </div>
+                  <div class="heatmap-legend">
+                    <span>Less</span>
+                    <div class="heatmap-legend-box heatmap-w0"></div>
+                    <div class="heatmap-legend-box heatmap-w1"></div>
+                    <div class="heatmap-legend-box heatmap-w2"></div>
+                    <div class="heatmap-legend-box heatmap-w3"></div>
+                    <div class="heatmap-legend-box heatmap-w4"></div>
+                    <span>More</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- List of checked-in users for today -->
+              <div class="card">
+                <h3 style="font-size:1rem; margin-bottom:16px;">Today's Live Check-in Log</h3>
+                <div class="table-container">
+                  <table class="premium-table">
+                    <thead>
+                      <tr>
+                        <th>Employee</th>
+                        <th>Check In</th>
+                        <th>Check Out</th>
+                        <th>Work Mode</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="attendance-live-log-table">
+                      <!-- Loaded via JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Late Checkins list -->
+            <div class="card" style="align-self: flex-start;">
+              <h3 style="font-size:1rem; margin-bottom:16px;">Late Arrivals Today</h3>
+              <div class="detail-list" id="attendance-late-arrivals-list">
+                <!-- Loaded dynamically -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ========================================================
+             P-4: LEAVE MANAGEMENT
+             ======================================================== -->
+        <div id="view-leaves" class="page-view">
+          <div class="page-title-row">
+            <div>
+              <h1>Leave Management</h1>
+              <p>Apply for leaves, view balances, and approve time-off requests.</p>
+            </div>
+            <div>
+              <button id="apply-leave-btn" class="btn btn-primary"><i data-lucide="plane-takeoff"></i> Apply Leave</button>
+            </div>
+          </div>
+
+          <!-- Leave Balances -->
+          <div class="dashboard-grid" id="leave-balances-container">
+            <!-- Populated via JS -->
+          </div>
+
+          <!-- Leave Requests Panels (Splits for Admin workflow) -->
+          <div class="dashboard-details-row">
+            
+            <div class="card">
+              <h3 style="font-size:1rem; margin-bottom:16px;" id="leave-history-title">Leave History</h3>
+              <div class="table-container">
+                <table class="premium-table">
+                  <thead>
+                    <tr>
+                      <th>Employee</th>
+                      <th>Leave Type</th>
+                      <th>Dates</th>
+                      <th>Duration</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="leave-history-table-body">
+                    <!-- Dynamically Loaded -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Timeline of Leave status/approval -->
+            <div class="card">
+              <h3 style="font-size:1rem; margin-bottom:16px;">Request Timeline</h3>
+              <div class="timeline-flow" id="leave-timeline-container">
+                <div class="empty-state">
+                  <i data-lucide="message-square" class="empty-state-icon" style="width:36px; height:36px;"></i>
+                  <h4>Select a request</h4>
+                  <p>Click on any request details to view comments and approval timelines.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ========================================================
+             P-5: PAYROLL & PAYSLIPS
+             ======================================================== -->
+        <div id="view-payroll" class="page-view">
+          <div class="page-title-row">
+            <div>
+              <h1>Payroll Center</h1>
+              <p>Generate salary statements, view breakdowns, and download pay statements.</p>
+            </div>
+          </div>
+
+          <div class="dashboard-details-row">
+            
+            <!-- Salary breakdown details -->
+            <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div class="flex-center" style="justify-content:space-between; margin-bottom:24px;">
+                  <h3 style="font-size:1.125rem;">Earnings Statement</h3>
+                  <select class="filter-select" id="payroll-employee-select">
+                    <!-- Loaded dynamically -->
+                  </select>
+                </div>
+                
+                <div id="payroll-breakdown-details-box">
+                  <!-- Dynamically Loaded -->
+                </div>
+              </div>
+
+              <div style="border-top:1px solid var(--border-color); padding-top:20px; margin-top:20px; display:flex; justify-content:flex-end;">
+                <button id="download-payslip-pdf-btn" class="btn btn-primary"><i data-lucide="printer"></i> Print Statement</button>
+              </div>
+            </div>
+
+            <!-- Payroll trend history charts -->
+            <div class="events-column">
+              <div class="card" style="height:250px; display:flex; flex-direction:column;">
+                <h3 style="font-size:0.9375rem; margin-bottom:12px;">Enterprise Payroll trends</h3>
+                <div style="flex-grow:1; position:relative;"><canvas id="payroll-chart"></canvas></div>
+              </div>
+
+              <!-- History records of payroll -->
+              <div class="card">
+                <h3 style="font-size:0.9375rem; margin-bottom:16px;">Payroll Credit Ledger</h3>
+                <div class="detail-list" id="payroll-ledger-list">
+                  <!-- Dynamically Loaded -->
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ========================================================
+             P-6: DOCUMENT LOCKER
+             ======================================================== -->
+        <div id="view-documents" class="page-view">
+          <div class="page-title-row">
+            <div>
+              <h1>Document Vault</h1>
+              <p>Access government IDs, tax files, performance reviews, and certificates.</p>
+            </div>
+            <div>
+              <button class="btn btn-outline" id="document-upload-mock-btn"><i data-lucide="upload-cloud"></i> Upload New</button>
+            </div>
+          </div>
+
+          <div class="dashboard-grid">
+            <div class="card flex-center" style="flex-direction:column; text-align:center; gap:12px; cursor:pointer;">
+              <i data-lucide="file-text" style="color:var(--brand-primary); width:36px; height:36px;"></i>
+              <h4 style="font-size:0.9375rem;">Employment Offer Letter</h4>
+              <p style="font-size:0.75rem; color:var(--text-secondary);">Verified on hire date</p>
+              <button class="btn btn-secondary btn-sm document-download-trigger" data-doc="Offer_Letter.pdf">Download</button>
+            </div>
+            <div class="card flex-center" style="flex-direction:column; text-align:center; gap:12px; cursor:pointer;">
+              <i data-lucide="file" style="color:var(--accent-secondary); width:36px; height:36px;"></i>
+              <h4 style="font-size:0.9375rem;">Government Identity</h4>
+              <p style="font-size:0.75rem; color:var(--text-secondary); color:var(--danger)">Expires: Dec 2028</p>
+              <button class="btn btn-secondary btn-sm document-download-trigger" data-doc="Govt_ID.pdf">Download</button>
+            </div>
+            <div class="card flex-center" style="flex-direction:column; text-align:center; gap:12px; cursor:pointer;">
+              <i data-lucide="award" style="color:var(--success); width:36px; height:36px;"></i>
+              <h4 style="font-size:0.9375rem;">University Degree / Certs</h4>
+              <p style="font-size:0.75rem; color:var(--text-secondary);">Background checked</p>
+              <button class="btn btn-secondary btn-sm document-download-trigger" data-doc="Certificates.pdf">Download</button>
+            </div>
+            <div class="card flex-center" style="flex-direction:column; text-align:center; gap:12px; cursor:pointer;">
+              <i data-lucide="shield-check" style="color:var(--info); width:36px; height:36px;"></i>
+              <h4 style="font-size:0.9375rem;">Tax Declaration (W-4)</h4>
+              <p style="font-size:0.75rem; color:var(--text-secondary);">Fiscal Year 2026</p>
+              <button class="btn btn-secondary btn-sm document-download-trigger" data-doc="W4_Tax_Declaration.pdf">Download</button>
+            </div>
+          </div>
+
+          <!-- Document security instructions -->
+          <div class="card" style="margin-top:24px; background:var(--brand-light); border-color:transparent; color:var(--brand-primary);">
+            <div style="display:flex; gap:16px;">
+              <i data-lucide="shield-alert" style="flex-shrink:0;"></i>
+              <div>
+                <h4 style="color:var(--brand-primary); font-size:0.9375rem; margin-bottom:4px;">Security Compliance Notice</h4>
+                <p style="font-size:0.8125rem; opacity:0.85;">All files inside this vault are encrypted end-to-end. Access to employee credentials conforms directly to SOC2 compliance protocols. Each secure download transaction is audited.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================================
+             P-7: SYSTEM ANALYTICS
+             ======================================================== -->
+        <div id="view-analytics" class="page-view">
+          <div class="page-title-row">
+            <div>
+              <h1>Workforce Analytics</h1>
+              <p>Deeper reports on department loads, hiring, gender parity, and payroll dynamics.</p>
+            </div>
+          </div>
+
+          <!-- Interactive Grid for Analytics -->
+          <div class="dashboard-details-row">
+            <div class="card" style="height:320px; display:flex; flex-direction:column;">
+              <h3 style="font-size:1rem; margin-bottom:12px;">Department Distributions</h3>
+              <div style="flex-grow:1; position:relative;"><canvas id="dept-chart"></canvas></div>
+            </div>
+            <div class="card" style="height:320px; display:flex; flex-direction:column;">
+              <h3 style="font-size:1rem; margin-bottom:12px;">Gender Diversity Distribution</h3>
+              <div style="flex-grow:1; position:relative;"><canvas id="gender-chart"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================================
+             P-8: SYSTEM SETTINGS
+             ======================================================== -->
+        <div id="view-settings" class="page-view">
+          <div class="page-title-row">
+            <div>
+              <h1>System Settings</h1>
+              <p>Configure layouts, notification thresholds, security compliance, and metadata.</p>
+            </div>
+          </div>
+
+          <div class="dashboard-details-row">
+            
+            <div class="flex-column" style="display:flex; flex-direction:column; gap:24px;">
+              <!-- General Settings -->
+              <div class="card">
+                <h3 style="font-size:1.125rem; margin-bottom:20px;">Interface Configurations</h3>
+                <div class="input-group">
+                  <label class="input-label">Theme Mode</label>
+                  <select class="filter-select" style="width:100%; max-width:none;" id="settings-theme-select">
+                    <option value="light">Light Theme Mode (Vibrant & Sleek)</option>
+                    <option value="dark">Dark Theme Mode (Slate & Indigo)</option>
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label class="input-label">System Languages</label>
+                  <select class="filter-select" style="width:100%; max-width:none;">
+                    <option value="en">English (US)</option>
+                    <option value="fr">French (Odoo Native)</option>
+                    <option value="es">Spanish</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Security Settings -->
+              <div class="card">
+                <h3 style="font-size:1.125rem; margin-bottom:20px;">Security & Compliance</h3>
+                <div style="display:flex; flex-direction:column; gap:16px;">
+                  <div style="display:flex; align-items:center; justify-content:space-between;">
+                    <div>
+                      <h5 style="font-size:0.875rem;">Require Two-Factor Authentication (2FA)</h5>
+                      <p style="font-size:0.75rem; color:var(--text-secondary)">Forces employees to authenticate using TOTP codes.</p>
+                    </div>
+                    <input type="checkbox" checked style="width:18px; height:18px; accent-color:var(--brand-primary);">
+                  </div>
+                  <div style="display:flex; align-items:center; justify-content:space-between; border-top: 1px solid var(--border-color); padding-top:16px;">
+                    <div>
+                      <h5 style="font-size:0.875rem;">Audit Connection Trails</h5>
+                      <p style="font-size:0.75rem; color:var(--text-secondary)">Log check-in GPS coordinates and IP signatures.</p>
+                    </div>
+                    <input type="checkbox" style="width:18px; height:18px; accent-color:var(--brand-primary);">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Company Profile Settings -->
+            <div class="card">
+              <h3 style="font-size:1.125rem; margin-bottom:20px;">Company Metadata</h3>
+              <form id="settings-company-form">
+                <div class="input-group">
+                  <label class="input-label">Company Name</label>
+                  <input type="text" class="input-field" value="Adamas University Enterprises">
+                </div>
+                <div class="input-group">
+                  <label class="input-label">HR Operations Email</label>
+                  <input type="email" class="input-field" value="hr.operations@adamas.co">
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Global Head Office Location</label>
+                  <input type="text" class="input-field" value="Kolkata, West Bengal, India">
+                </div>
+                <button type="button" id="save-settings-btn" class="btn btn-primary" style="width:100%;">Save Metadata</button>
+              </form>
+            </div>
+
+          </div>
+        </div>
+
+      </section>
+    </main>
+
+  </div>
+
+  <!-- ========================================================
+       5. INTERACTIVE BLURRED-BACKDROP MODALS
+       ======================================================== -->
+  
+  <!-- Add Employee Modal -->
+  <div id="modal-add-employee" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 style="font-size:1.125rem;">Quick Employee Onboarding</h3>
+        <button class="close-modal-btn" data-modal="modal-add-employee">&times;</button>
+      </div>
+      <form id="add-employee-form">
+        <div class="modal-body">
+          <div class="input-group">
+            <label class="input-label">Full Name</label>
+            <input type="text" id="new-emp-name" class="input-field" placeholder="e.g. Liam Neeson" required>
+          </div>
+          <div class="input-group">
+            <label class="input-label">Corporate Email</label>
+            <input type="email" id="new-emp-email" class="input-field" placeholder="e.g. liam@odoo.co" required>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div class="input-group">
+              <label class="input-label">Department</label>
+              <select id="new-emp-dept" class="filter-select" style="width:100%;">
+                <option value="Engineering">Engineering</option>
+                <option value="Product & Design">Product & Design</option>
+                <option value="Human Resources">Human Resources</option>
+                <option value="Finance & Operations">Finance & Operations</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Role Designation</label>
+              <input type="text" id="new-emp-role" class="input-field" placeholder="e.g. Junior Engineer" required>
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1.5fr 1fr; gap:16px;">
+            <div class="input-group">
+              <label class="input-label">Starting Annual Salary ($)</label>
+              <input type="number" id="new-emp-salary" class="input-field" value="5000" required>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Blood Group</label>
+              <select id="new-emp-blood" class="filter-select" style="width:100%;">
+                <option value="O+">O+</option>
+                <option value="A+">A+</option>
+                <option value="B+">B+</option>
+                <option value="AB+">AB+</option>
+                <option value="O-">O-</option>
+                <option value="A-">A-</option>
+                <option value="B-">B-</option>
+                <option value="AB-">AB-</option>
+              </select>
+            </div>
+          </div>
+          <div class="input-group">
+            <label class="input-label">Manager ID / Name</label>
+            <input type="text" id="new-emp-manager" class="input-field" value="Sarah Jenkins">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline close-modal-btn" data-modal="modal-add-employee">Cancel</button>
+          <button type="submit" class="btn btn-primary">Onboard Employee</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Apply Leave Modal -->
+  <div id="modal-apply-leave" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 style="font-size:1.125rem;">Apply for Time-Off</h3>
+        <button class="close-modal-btn" data-modal="modal-apply-leave">&times;</button>
+      </div>
+      <form id="apply-leave-form">
+        <div class="modal-body">
+          <div class="input-group">
+            <label class="input-label">Leave Category</label>
+            <select id="leave-type-field" class="filter-select" style="width:100%;">
+              <option value="Casual Leave">Casual Leave</option>
+              <option value="Sick Leave">Sick Leave</option>
+              <option value="Annual Leave">Annual Leave</option>
+            </select>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div class="input-group">
+              <label class="input-label">Start Date</label>
+              <input type="date" id="leave-start-date" class="input-field" required>
+            </div>
+            <div class="input-group">
+              <label class="input-label">End Date</label>
+              <input type="date" id="leave-end-date" class="input-field" required>
+            </div>
+          </div>
+          <div class="input-group">
+            <label class="input-label">Detailed Reason</label>
+            <textarea id="leave-reason" class="input-field" style="height:100px; resize:none;" placeholder="Write specific reason for absence..." required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline close-modal-btn" data-modal="modal-apply-leave">Cancel</button>
+          <button type="submit" class="btn btn-primary">Submit Application</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Digital ID Badge Modal -->
+  <div id="modal-digital-id" class="modal-overlay">
+    <div class="modal-box" style="background:transparent; border:none; box-shadow:none; max-width:360px;">
+      <div class="badge-modal-content">
+        
+        <!-- Hover flipping ID Card -->
+        <div class="id-card-wrapper">
+          <div class="id-card-inner" id="id-card-flipper">
+            
+            <!-- Front of ID Card -->
+            <div class="id-card-front">
+              <div class="flex-center" style="justify-content:space-between; width:100%;">
+                <div class="flex-center" style="gap:4px;">
+                  <div class="logo-circle flex-center" style="width:24px; height:24px; font-size:0.8rem; border-radius:5px;">O</div>
+                  <span style="font-size:0.75rem; font-weight:700; color:white;">odoo</span>
+                </div>
+                <span class="badge badge-success" style="font-size:0.6rem; padding: 2px 6px;">VERIFIED ID</span>
+              </div>
+              
+              <div>
+                <div class="avatar-container">
+                  <img id="badge-front-avatar" src="" alt="Employee Badge Image">
+                </div>
+                <h3 id="badge-front-name">Rahul Sharma</h3>
+                <p class="designation" id="badge-front-role">Senior Frontend Engineer</p>
+              </div>
+              
+              <div style="display:flex; justify-content:space-between; font-size:0.7rem; border-top:1px solid rgba(255,255,255,0.1); padding-top:12px;">
+                <div style="text-align:left;">
+                  <div style="opacity:0.6;">EMP ID</div>
+                  <strong id="badge-front-id" style="color:white;">EMP-002</strong>
+                </div>
+                <div style="text-align:right;">
+                  <div style="opacity:0.6;">BLOOD</div>
+                  <strong id="badge-front-blood" style="color:white;">O+</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Back of ID Card -->
+            <div class="id-card-back">
+              <div style="text-align:center; padding-top:10px;">
+                <h5 style="font-size:0.9375rem; color:var(--text-primary); margin-bottom:4px;">SECURE ID BADGE</h5>
+                <p style="font-size:0.6875rem; color:var(--text-secondary);">Hover to flip back • Scan for Verification</p>
+              </div>
+
+              <!-- Rotating Seeded QR Code -->
+              <div class="qr-code-holder" id="badge-back-qr">
+                <!-- Dynamically loaded SVG QR -->
+              </div>
+
+              <div class="id-card-back-details">
+                <div><strong>Manager:</strong> <span id="badge-back-manager">Sarah Jenkins</span></div>
+                <div><strong>Joined:</strong> <span id="badge-back-hired">2023-01-10</span></div>
+                <div style="border-top:1px solid var(--border-color); padding-top:8px; margin-top:4px; font-size:0.625rem; color:var(--text-secondary); text-align:center;">
+                  If found, please return to any Odoo corporate headquarters.
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <button class="btn btn-outline close-modal-btn" data-modal="modal-digital-id" style="margin-top:24px; color:white; border-color:rgba(255,255,255,0.3); background:rgba(255,255,255,0.1);">Close Badge</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Approval Comments / Timeline Modal -->
+  <div id="modal-leave-approval" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 style="font-size:1.125rem;">Time-Off Request Assessment</h3>
+        <button class="close-modal-btn" data-modal="modal-leave-approval">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="leave-approval-details-box" style="display:flex; flex-direction:column; gap:16px;">
+          <!-- Loaded Dynamically -->
+        </div>
+        <div class="input-group" style="margin-top:20px;">
+          <label class="input-label">Assessor Comments / Instructions</label>
+          <textarea id="leave-assess-comment" class="input-field" style="height:80px; resize:none;" placeholder="Enter reason for approval or rejection..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer" id="leave-approval-footer-actions">
+        <!-- Buttons loaded dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
