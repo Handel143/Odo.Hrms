@@ -1,0 +1,15 @@
+{
+  "name": "odo-hrms-backend",
+  "version": "1.0.0",
+  "description": "REST API backend for the Odo HRMS frontend. Zero external dependencies - pure Node.js.",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "reset-db": "rm -f data/db.json && echo 'Database reset. It will be reseeded on next start.'"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
